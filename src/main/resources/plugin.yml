@@ -1,0 +1,14 @@
+name: MonitoringReward
+version: '${project.version}'
+main: themixray.monitoringreward.Main
+api-version: 1.20
+authors: [ TheMixRay ]
+description: Monitoring Rewards
+
+commands:
+  reload:
+    description: Перезагрузка плагина
+    permission: monitoring-reward.command.reload
+permissions:
+  monitoring-reward.command.reload:
+    default: op
