@@ -1,4 +1,4 @@
-package themixray.monitoringreward;
+package ru.froggymonitor.rewardplugin;
 
 import com.google.common.base.Charsets;
 import com.sun.net.httpserver.Headers;

@@ -1,101 +1,28 @@
-site_ip: localhost   # IP адрес для сайта
-site_port: 8080      # Порт для сайта
+site_host: localhost   # IP адрес для сайта
+site_port: 8080        # Порт для сайта
+site_backlog: 5        # Максимальное кол-во подключений одновременно
 
-add_vote_command: false  # Тестовая команда /vote/мониторинг
+secret_token: "ваш_секретный_токен" # Секретный токен с FroggyMonitor
 
-add_general_monitoring: true   # Добавлять голос к общему счетчику
-add_specific_monitoring: true  # Добавлять голос к счетчику мониторинга
+comment_page: "/api/comment" # Страница для награды за отзыв
+vote_page: "/api/vote"       # Страница для награды за голос
 
-hotmc_token: "SECRET_TOKEN"             # Секретный токен HotMC
-mineserv_token: "SECRET_TOKEN"          # Секретный токен MineServ
-minecraftrating_token: "SECRET_TOKEN"   # Секретный токен MinecraftRating
-misterlauncher_token: "SECRET_TOKEN"    # Секретный токен MisterLauncher
+# Что указать в FroggyMonitor?
+# В URL для поощрения за отзыв: http://{ip_сервера}:{site_port}{comment_page}  ->  http://example.com:8080/api/comment
+# В URL для поощрения за голос: http://{ip_сервера}:{site_port}{vote_page}     ->  http://example.com:8080/api/vote
+# Также возможно понадобится открыть порт на хосте
 
-reward_message:   # Сообщение о получении награды голосуя (%d необязательно)
-  hotmc: "Вы получили %s за голос на HotMC!\nДо супер-награды осталось %d голосов."
-  mineserv: "Вы получили %s за голос на MineServ!\nДо супер-награды осталось %d голосов."
-  minecraftrating: "Вы получили %s за голос на MinecraftRating!\nДо супер-награды осталось %d голосов."
-  misterlauncher: "Вы получили %s за голос на MisterLauncher!\nДо супер-награды осталось %d голосов."
+vote:                   # Награда за голос
+  vault: 10                     # Выдать валюту (необяз.)
+  item: "diamond 10"            # Выдать предмет (необяз.) (забрать предмет нельзя)
+  message: "Спасибо за голос!"  # Отправить сообщение (необяз.)
+  commands:                     # Исполнить команды (необяз.)
+    - "/title {player_name} subtitle на FroggyMonitor"
+    - "/title {player_name} title Спасибо за отзыв!"
 
-super_reward_message:   # Сообщение о получении супер-награды
-  general: "§6Вы получили %s за голоса на мониторингах!"
-  hotmc: "§6Вы получили %s за голоса на HotMC!"
-  mineserv: "§6Вы получили %s за голоса на MineServ!"
-  minecraftrating: "§6Вы получили %s за голоса на MinecraftRating!"
-  misterlauncher: "§6Вы получили %s за голоса на MisterLauncher!"
+add_comment:        # Награда за удаление отзыва
+  vault: 10
+  message: "Спасибо за отзыв!"
 
-player_offline_only_money: false          # Если игрок оффлайн, выдавать в награду только монеты
-
-super_reward_votes: 10                    # Число голосов для супер-награды
-super_reward:                             # Супер-награды
-  - type: item                            # Тип награды (предмет)
-    name: "Алмаз x1"                      # Название награды (в чате)
-    item:
-      type: item
-      material: diamond                     # Тип предмета
-      count: 1                              # Кол-во предметов
-      display_name: "Алмаз (легендарный)"   # Название предмета (необязательно)
-      lore: |                               # Описание (лор) предмета (необязательно)
-        Описание предмета
-        Вторая строчка описания
-        Третья строчка описания
-  - type: money                         # Тип награды (валюта)
-    count: 10                           # Кол-во валюты
-
-special_super_reward_votes: 10          # Число голосов для супер-награды (по мониторингу)
-special_super_reward:                   # Супер-награды по мониторингам
-  - type: item
-    name: "Изумруд x1"
-    item:
-      material: emerald
-      count: 5
-      display_name: "Алмаз (легендарный)"
-      lore: |                               
-        Описание предмета
-        Вторая строчка описания
-        Третья строчка описания
-  - type: money
-    count: 100
-
-default_reward:   # Обычные награды
-  - type: item
-    name: "Палка x5"
-    item:
-      material: stick
-      count: 5
-      display_name: "Палка (обычная)"
-      lore: |
-        Описание предмета
-        Вторая строчка описания
-        Третья строчка описания
-  - type: money
-    count: 1
-
-
-# Формат конфига для предмета:
-
-#  -- Обычный предмет --
-# type: item
-# material: <тип_предмета>
-# count: <колво_предмета>
-# enchants:
-#   <название_зачарования>: <сила_зачарования>
-# nbt:
-#   <нбт_ключ>: <значение>
-# display_name: <название_предмета>
-# lore:
-#   - <первая_строка_описания>
-#   - <вторая_строка_описания>
-#   - <n_ая_строка_описания>
-
-#  -- Зелье --
-# type: potion
-# material: <тип_предмета>
-# effect: <тип_эффекта>
-# duration: <длительность_эффекта>
-# amplifier: <сила_эффекта>
-
-#  -- Кастомный предмет --
-# type: custom
-# name: <имя_кстамного_предмета>
-# count: <кол_во_предмета>
+del_comment:        # Награда за удаление отзыва
+  vault: -10                    # Снять валюту

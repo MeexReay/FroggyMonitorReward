@@ -1,4 +1,4 @@
-package themixray.monitoringreward;
+package ru.froggymonitor.rewardplugin;
 
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
@@ -17,20 +17,24 @@ import java.util.Map;
 public class SitePart extends FormDataHandler {
     public HttpServer server;
 
-    public SitePart(String host, int port) {
+    public SitePart(String host, int port, int backlog) {
         try {
-            server = HttpServer.create(new InetSocketAddress(host,port),0);
-            server.createContext("/vote",this);
+            server = HttpServer.create(new InetSocketAddress(host,port),backlog);
+            server.createContext("/",this);
             server.setExecutor(null);
-            server.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public String sha1(String s) {
-        return Hashing.sha1().hashString(s, Charsets.UTF_8).toString();
+    public void start() {
+        server.start();
     }
+
+    public void stop() {
+        server.stop(1);
+    }
+
     public String sha256(String s) {
         return Hashing.sha256().hashString(s, Charsets.UTF_8).toString();
     }
@@ -43,76 +47,44 @@ public class SitePart extends FormDataHandler {
         String method = e.getRequestMethod();
         String path = e.getRequestURI().getPath();
 
-        if (method.equals("POST")) {
-            if (path.equals("/vote/hotmc")) {
-                if (params.size() == 3) {
-                    if (params.containsKey("nick") &&
-                            params.containsKey("time") &&
-                            params.containsKey("sign")) {
-                        String nick = (String) params.get("nick");
-                        String time = (String) params.get("time");
-                        String sign = (String) params.get("sign");
-                        String sign_gen = sha1(nick+time+Main.me.hotmc_token);
+        if (method.equals("GET")) {
+            if (path.equals(Main.me.vote_page)) {
+                if (params.containsKey("nickname") &&
+                        params.containsKey("timestamp") &&
+                        params.containsKey("secret")) {
+                    String nickname = (String) params.get("nickname");
+                    String timestamp = (String) params.get("timestamp");
+                    String secret = (String) params.get("secret");
 
-                        if (sign.equals(sign_gen)) {
-                            response = "ok";
-                            status_code = 200;
-                            Main.me.sendVote(nick,"hotmc");
-                        }
+                    if (sha256(nickname + timestamp + Main.me.secret_token).equals(secret)) {
+                        Main.me.vote_reward.execute(nickname);
+                        response = "ok";
+                        status_code = 200;
                     }
                 }
-            } else if (path.equals("/vote/mineserv")) {
-                if (params.size() == 4) {
-                    if (params.containsKey("project") &&
-                            params.containsKey("username") &&
-                            params.containsKey("timestamp") &&
-                            params.containsKey("signature")) {
-                        String project = (String) params.get("project");
-                        String username = (String) params.get("username");
-                        String timestamp = (String) params.get("timestamp");
-                        String signature = (String) params.get("signature");
-                        String sign_gen = sha256(project+"."+Main.me.mineserv_token+"."+timestamp+"."+username);
+            } else if (path.equals(Main.me.comment_page)) {
+                if (params.containsKey("nickname") &&
+                        params.containsKey("type") &&
+                        params.containsKey("username") &&
+                        params.containsKey("timestamp") &&
+                        params.containsKey("secret")) {
+                    String type = (String) params.get("type");
+                    String username = (String) params.get("username");
+                    String nickname = (String) params.get("nickname");
+                    String timestamp = (String) params.get("timestamp");
+                    String secret = (String) params.get("secret");
 
-                        if (signature.equals(sign_gen)) {
-                            response = "done";
-                            status_code = 200;
-                            Main.me.sendVote(username,"mineserv");
-                        }
-                    }
-                }
-            } else if (path.equals("/vote/minecraftrating")) {
-                if (params.size() == 4) {
-                    if (params.containsKey("ip") &&
-                            params.containsKey("username") &&
-                            params.containsKey("timestamp") &&
-                            params.containsKey("signature")) {
-                        String username = (String) params.get("username");
-                        String timestamp = (String) params.get("timestamp");
-                        String signature = (String) params.get("signature");
-                        String sign_gen = sha1(username+timestamp+Main.me.minecraftrating_token);
+                    if (sha256(username + nickname + timestamp + Main.me.secret_token).equals(secret)) {
+                        if (type.equals("insert")) {
+                            Main.me.add_comment_reward.execute(nickname);
 
-                        if (signature.equals(sign_gen)) {
                             response = "ok";
                             status_code = 200;
-                            Main.me.sendVote(username,"minecraftrating");
-                        }
-                    }
-                }
-            } else if (path.equals("/vote/misterlauncher")) {
-                if (params.size() == 4) {
-                    if (params.containsKey("ip") &&
-                            params.containsKey("username") &&
-                            params.containsKey("timestamp") &&
-                            params.containsKey("signature")) {
-                        String username = (String) params.get("username");
-                        String timestamp = (String) params.get("timestamp");
-                        String signature = (String) params.get("signature");
-                        String sign_gen = sha1(username+timestamp+Main.me.misterlauncher_token);
+                        } else if (type.equals("delete")) {
+                            Main.me.del_comment_reward.execute(nickname);
 
-                        if (signature.equals(sign_gen)) {
                             response = "ok";
                             status_code = 200;
-                            Main.me.sendVote(username,"misterlauncher");
                         }
                     }
                 }
@@ -122,8 +94,8 @@ public class SitePart extends FormDataHandler {
         try {
             e.sendResponseHeaders(status_code, response.length());
 
-                OutputStream os = e.getResponseBody();
-                os.write(response.getBytes());
+            OutputStream os = e.getResponseBody();
+            os.write(response.getBytes());
         } catch (IOException ex) {
             ex.printStackTrace();
         }

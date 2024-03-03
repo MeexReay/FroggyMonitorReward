@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>themixray</groupId>
-    <artifactId>monitoring-reward</artifactId>
+    <groupId>ru.froggymonitor</groupId>
+    <artifactId>rewardplugin</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>Monitoring Reward</name>
+    <name>FroggyMonitorReward</name>
 
-    <description>Monitoring Rewards</description>
+    <description>Плагин для награды игроков за голоса и отзывы на FroggyMonitor</description>
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,13 +76,8 @@
             <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>codemc-repo</id>
-            <url>https://repo.codemc.org/repository/maven-public/</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>enginehub-maven</id>
-            <url>https://maven.enginehub.org/repo/</url>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
     </repositories>
 
@@ -90,7 +85,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>1.13.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -100,16 +95,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.ssomar.score</groupId>
-            <artifactId>SCore</artifactId>
-            <version>4.24.2.14</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/SCore.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>de.tr7zw</groupId>
-            <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.12.0</version>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.5</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
