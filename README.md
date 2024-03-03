@@ -6,6 +6,8 @@
 FroggyMonitor на поощрение игрока,
 плагин их читает и выполняет действие из конфига
 
+[Скачать](https://github.com/MeexReay/FroggyMonitorReward/releases/latest)
+
 ## Конфиг
 ```yml
 site_host: localhost   # IP адрес для сайта
