@@ -47,7 +47,7 @@ public class SitePart extends FormDataHandler {
         String method = e.getRequestMethod();
         String path = e.getRequestURI().getPath();
 
-        System.out.println(response+" "+status_code+" "+path+" "+method);
+//        System.out.println(response+" "+status_code+" "+path+" "+method);
 
         if (method.equals("GET")) {
             if (path.equals(Main.me.vote_page)) {

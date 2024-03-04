@@ -14,8 +14,6 @@ import java.util.*;
 public abstract class FormDataHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        System.out.println(httpExchange);
-
         Headers headers = httpExchange.getRequestHeaders();
 
         if (headers.containsKey("Content-type")) {
