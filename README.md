@@ -36,7 +36,7 @@ vote:                   # Награда за голос
     - "/title {player_name} subtitle на FroggyMonitor"
     - "/title {player_name} title Спасибо за отзыв!"
 
-add_comment:        # Награда за удаление отзыва
+add_comment:        # Награда за добавление отзыва
   vault: 10
   message: "Спасибо за отзыв!"
 
