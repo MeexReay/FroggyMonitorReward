@@ -12,7 +12,7 @@ FroggyMonitor на поощрение игрока,
 ```yml
 site_host: localhost   # IP адрес для сайта
 site_port: 8080        # Порт для сайта
-site_backlog: 5        # Максимальное кол-во подключений одновременно
+site_backlog: 0        # Максимальное кол-во подключений одновременно
 
 secret_token: "ваш_секретный_токен" # Секретный токен с FroggyMonitor
 
