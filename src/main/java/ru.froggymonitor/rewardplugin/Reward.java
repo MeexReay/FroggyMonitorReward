@@ -34,7 +34,7 @@ public class Reward {
             }
         }
 
-        OfflinePlayer offlinePlayer = Main.getOfflinePlayer(nickname);
+        OfflinePlayer offlinePlayer = player != null ? player : Main.getOfflinePlayer(nickname);
 
         if (offlinePlayer != null) {
             if (data.containsKey("vault")) {
@@ -44,7 +44,7 @@ public class Reward {
             if (data.containsKey("commands")) {
                 for (String c : new ArrayList<>((List<String>) data.get("commands"))) {
                     if (c.startsWith("/")) c = c.substring(1);
-                    getServer().dispatchCommand(getServer().getConsoleSender(),c);
+                    getServer().dispatchCommand(getServer().getConsoleSender(),PlaceholderAPI.setPlaceholders(offlinePlayer, c));
                 }
             }
         }
