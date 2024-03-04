@@ -6,6 +6,8 @@
 FroggyMonitor на поощрение игрока,
 плагин их читает и выполняет действие из конфига
 
+[Скачать](https://github.com/MeexReay/FroggyMonitorReward/releases/latest)
+
 ## Конфиг
 ```yml
 site_host: localhost   # IP адрес для сайта
@@ -34,7 +36,7 @@ vote:                   # Награда за голос
     - "/title {player_name} subtitle на FroggyMonitor"
     - "/title {player_name} title Спасибо за отзыв!"
 
-add_comment:        # Награда за удаление отзыва
+add_comment:        # Награда за добавление отзыва
   vault: 10
   message: "Спасибо за отзыв!"
 
