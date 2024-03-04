@@ -1,4 +1,4 @@
-name: MonitoringReward
+name: FroggyMonitorReward
 version: '${project.version}'
 main: ru.froggymonitor.rewardplugin.Main
 api-version: 1.13
