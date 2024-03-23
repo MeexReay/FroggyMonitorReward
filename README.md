@@ -6,6 +6,8 @@
 [Скачать](https://github.com/MeexReay/FroggyMonitorReward/releases/latest)
 
 ## Конфиг
+Конфигурационный файл по умолчанию выглядит так
+
 ```yml
 bind_host: 0.0.0.0    # Локальный IP адрес сервера (обычно такой же как и в server.properties)
 bind_port: 8080       # Свободный порт для сайта (потребуется открыть его на хостинге)
