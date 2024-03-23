@@ -14,10 +14,12 @@ import java.util.Map;
 import static org.bukkit.Bukkit.getServer;
 
 public class Reward {
+    public String name;
     public Map<String,Object> data;
 
-    public Reward(Map<String,Object> data) {
+    public Reward(String name, Map<String,Object> data) {
         this.data = data;
+        this.name = name;
     }
 
     public void execute(String nickname) {
@@ -30,8 +32,9 @@ public class Reward {
                 player.getInventory().addItem(item);
             }
             if (data.containsKey("message")) {
-                player.sendMessage(PlaceholderAPI.setPlaceholders(player, (String) data.get("message")));
+                player.spigot().sendMessage(Main.me.message_formatting.format(PlaceholderAPI.setPlaceholders(player, (String) data.get("message"))));
             }
+            Main.me.cache.put(nickname, name);
         }
 
         OfflinePlayer offlinePlayer = player != null ? player : Main.getOfflinePlayer(nickname);
@@ -47,6 +50,17 @@ public class Reward {
                     getServer().dispatchCommand(getServer().getConsoleSender(),PlaceholderAPI.setPlaceholders(offlinePlayer, c));
                 }
             }
+        }
+    }
+
+    public void later(Player player) {
+        if (data.containsKey("item")) {
+            String[] ss = ((String)data.get("item")).split(" ");
+            ItemStack item = new ItemStack(Material.valueOf(ss[0].toUpperCase()), ss.length == 1 ? 1 : Integer.parseInt(ss[1]));
+            player.getInventory().addItem(item);
+        }
+        if (data.containsKey("message")) {
+            player.spigot().sendMessage(Main.me.message_formatting.format(PlaceholderAPI.setPlaceholders(player, (String) data.get("message"))));
         }
     }
 }

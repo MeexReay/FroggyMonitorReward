@@ -3,21 +3,23 @@ package ru.froggymonitor.rewardplugin;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class SitePart extends FormDataHandler {
     public HttpServer server;
 
+    public String host;
+    public int port;
+
     public SitePart(String host, int port, int backlog) {
+        this.host = host;
+        this.port = port;
+
         try {
             server = HttpServer.create(new InetSocketAddress(host,port),backlog);
             server.createContext("/",this);
@@ -29,6 +31,8 @@ public class SitePart extends FormDataHandler {
 
     public void start() {
         server.start();
+
+        if (Main.me.enable_logs) Main.me.getLogger().info("Site started at "+host+":"+port);
     }
 
     public void stop() {
@@ -47,8 +51,6 @@ public class SitePart extends FormDataHandler {
         String method = e.getRequestMethod();
         String path = e.getRequestURI().getPath();
 
-//        System.out.println(response+" "+status_code+" "+path+" "+method);
-
         if (method.equals("GET")) {
             if (path.equals(Main.me.vote_page)) {
                 if (params.containsKey("nickname") &&
@@ -62,6 +64,8 @@ public class SitePart extends FormDataHandler {
                         Main.me.vote_reward.execute(nickname);
                         response = "ok";
                         status_code = 200;
+
+                        if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"vote\" gave to player "+nickname);
                     }
                 }
             } else if (path.equals(Main.me.comment_page)) {
@@ -82,11 +86,15 @@ public class SitePart extends FormDataHandler {
 
                             response = "ok";
                             status_code = 200;
+
+                            if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"add_comment\" gave to player "+nickname);
                         } else if (type.equals("delete")) {
                             Main.me.del_comment_reward.execute(nickname);
 
                             response = "ok";
                             status_code = 200;
+
+                            if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"del_comment\" gave to player "+nickname);
                         }
                     }
                 }

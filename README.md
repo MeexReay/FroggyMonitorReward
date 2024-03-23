@@ -1,45 +1,58 @@
 # FroggyMonitorReward
 Плагин для награды игроков за голоса и отзывы на FroggyMonitor
 
-Плагин запускает сайт,
-на который будут приходить запросы от
-FroggyMonitor на поощрение игрока,
-плагин их читает и выполняет действие из конфига
-
 [Скачать](https://github.com/MeexReay/FroggyMonitorReward/releases/latest)
 
 ## Конфиг
 ```yml
-site_host: localhost   # IP адрес для сайта
-site_port: 8080        # Порт для сайта
-site_backlog: 0        # Максимальное кол-во подключений одновременно
+bind_host: 0.0.0.0    # Локальный IP адрес сервера (обычно такой же как и в server.properties)
+bind_port: 8080       # Свободный порт для сайта (потребуется открыть его на хостинге)
+
+external_host: example.com   # Внешний IP адрес / домен сервера
 
 secret_token: "ваш_секретный_токен" # Секретный токен с FroggyMonitor
 
-comment_page: "/api/comment" # Страница для награды за отзыв
-vote_page: "/api/vote"       # Страница для награды за голос
-
-# Что указать в FroggyMonitor?
-# В URL для поощрения за отзыв: 
-#         http://{ip_сервера}:{site_port}{comment_page}  
-#     ->  http://example.com:8080/api/comment
-# В URL для поощрения за голос: 
-#         http://{ip_сервера}:{site_port}{vote_page}     
-#     ->  http://example.com:8080/api/vote
-# Также возможно понадобится открыть порт на хосте
-
 vote:                   # Награда за голос
-  vault: 10                     # Выдать валюту (необяз.)
-  item: "diamond 10"            # Выдать предмет (необяз.) (забрать предмет нельзя)
-  message: "Спасибо за голос!"  # Отправить сообщение (необяз.)
-  commands:                     # Исполнить команды (необяз.)
+  vault: 10                     # Выдать валюту
+  item: "diamond 10"            # Выдать предмет (забрать предмет нельзя)
+  message: "Спасибо за голос!"  # Отправить сообщение
+  commands:                     # Исполнить команды
     - "/title {player_name} subtitle на FroggyMonitor"
     - "/title {player_name} title Спасибо за отзыв!"
+  # Каждый параметр наград не обязателен
 
-add_comment:        # Награда за добавление отзыва
+add_comment:        # Награда за удаление отзыва
   vault: 10
   message: "Спасибо за отзыв!"
 
 del_comment:        # Награда за удаление отзыва
   vault: -10                    # Снять валюту
+
+enable_logs: true    # Включить логи плагина (true/false); true - вкл; false - выкл
+
+message_formatting: "ampersand" # Изменить тип форматирования сообщений
+  # Типы форматирования:
+    # ampersand:    &cСообщение
+    # section:      §cСообщение
+    # minimessage:  <red>Сообщение</red>
+    # json:         {"text": "Сообщение", "color": "red"}
+```
+
+## Как это работает
+
+```mermaid
+sequenceDiagram
+    participant FroggyMonitor
+    participant Сервер
+    participant Сайт
+    participant Плагин
+    participant Vault
+    Сервер-->>Плагин: Запуск плагина
+    Плагин-->>Сайт: Запуск сайта
+    FroggyMonitor->>Сайт: Игрок проголосовал за сервер
+    Сайт->>Плагин: Голос игрока
+    Плагин->>Vault: Выдать валюту
+    Плагин->>Сервер: Выдать предмет
+    Плагин->>Сервер: Отправить сообщение
+    Плагин->>Сервер: Выполнить команды
 ```
