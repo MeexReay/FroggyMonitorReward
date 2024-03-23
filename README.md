@@ -1,5 +1,7 @@
 # FroggyMonitorReward
 Плагин для награды игроков за голоса и отзывы на FroggyMonitor
+Он сам изменяет URL'ы для поощрения на мониторинге, самим не надо ничего делать
+Поддерживает PlaceholderAPI и Vault
 
 [Скачать](https://github.com/MeexReay/FroggyMonitorReward/releases/latest)
 
