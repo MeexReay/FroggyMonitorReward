@@ -1,5 +1,7 @@
 package ru.froggymonitor.rewardplugin;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -57,19 +59,13 @@ public final class Main extends JavaPlugin implements Listener {
 
     public File cache_file;
 
+    public boolean has_placeholderapi;
+    public boolean has_vault;
+
     @Override
     public void onEnable() {
-        if (!setupEconomy()) {
-            getLogger().severe("[FroggyMonitorReward] - Disabled due to no Vault dependency found!");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") == null) {
-            getLogger().severe("[FroggyMonitorReward] - Disabled due to no PlaceholderAPI dependency found!");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
+        has_vault = setupEconomy();
+        has_placeholderapi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         me = this;
 
@@ -108,8 +104,8 @@ public final class Main extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        site.stop();
         saveCache();
+        site.stop();
     }
 
     @EventHandler
@@ -192,5 +188,13 @@ public final class Main extends JavaPlugin implements Listener {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public BaseComponent[] formatMessage(Player player, String text) {
+        return Main.me.message_formatting.format(has_placeholderapi ? PlaceholderAPI.setPlaceholders(player, text) : text);
+    }
+
+    public void giveVault(OfflinePlayer player, double amount) {
+        if (has_vault) econ.depositPlayer(player, amount);
     }
 }

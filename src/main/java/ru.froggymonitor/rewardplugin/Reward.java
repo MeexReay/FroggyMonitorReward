@@ -26,14 +26,8 @@ public class Reward {
         Player player = Bukkit.getPlayer(nickname);
 
         if (player != null) {
-            if (data.containsKey("item")) {
-                String[] ss = ((String)data.get("item")).split(" ");
-                ItemStack item = new ItemStack(Material.valueOf(ss[0].toUpperCase()), ss.length == 1 ? 1 : Integer.parseInt(ss[1]));
-                player.getInventory().addItem(item);
-            }
-            if (data.containsKey("message")) {
-                player.spigot().sendMessage(Main.me.message_formatting.format(PlaceholderAPI.setPlaceholders(player, (String) data.get("message"))));
-            }
+            later(player);
+        } else {
             Main.me.cache.put(nickname, name);
         }
 
@@ -41,7 +35,7 @@ public class Reward {
 
         if (offlinePlayer != null) {
             if (data.containsKey("vault")) {
-                Main.me.econ.depositPlayer(offlinePlayer,
+                Main.me.giveVault(offlinePlayer,
                     ((Number) data.get("vault")).doubleValue());
             }
             if (data.containsKey("commands")) {
@@ -61,6 +55,11 @@ public class Reward {
         }
         if (data.containsKey("message")) {
             player.spigot().sendMessage(Main.me.message_formatting.format(PlaceholderAPI.setPlaceholders(player, (String) data.get("message"))));
+        }
+        if (data.containsKey("as_player")) {
+            for (String c : new ArrayList<>((List<String>) data.get("as_player"))) {
+                player.chat(c);
+            }
         }
     }
 }
