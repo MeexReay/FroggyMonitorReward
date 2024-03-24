@@ -4,11 +4,23 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.InetSocketAddress;
 import java.util.Map;
+
+import static org.bukkit.Bukkit.getServer;
 
 public class SitePart extends FormDataHandler {
     public HttpServer server;
@@ -51,62 +63,66 @@ public class SitePart extends FormDataHandler {
         String method = e.getRequestMethod();
         String path = e.getRequestURI().getPath();
 
-        if (method.equals("GET")) {
-            if (path.equals(Main.me.vote_page)) {
-                if (params.containsKey("nickname") &&
-                        params.containsKey("timestamp") &&
-                        params.containsKey("secret")) {
-                    String nickname = (String) params.get("nickname");
-                    String timestamp = (String) params.get("timestamp");
-                    String secret = (String) params.get("secret");
+        try {
+            if (method.equals("GET")) {
+                if (path.equals(Main.me.vote_page)) {
+                    if (params.containsKey("nickname") &&
+                            params.containsKey("timestamp") &&
+                            params.containsKey("secret")) {
+                        String nickname = (String) params.get("nickname");
+                        String timestamp = (String) params.get("timestamp");
+                        String secret = (String) params.get("secret");
 
-                    if (sha256(nickname + timestamp + Main.me.secret_token).equals(secret)) {
-                        Main.me.vote_reward.execute(nickname);
-                        response = "ok";
-                        status_code = 200;
+                        String secret_gen = sha256(nickname + timestamp + Main.me.secret_token);
 
-                        if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"vote\" gave to player "+nickname);
+                        if (secret_gen.equals(secret)) {
+                            Main.me.vote_reward.execute(nickname);
+                            response = "ok";
+                            status_code = 200;
+
+                            if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"vote\" gave to player "+nickname);
+                        }
                     }
-                }
-            } else if (path.equals(Main.me.comment_page)) {
-                if (params.containsKey("nickname") &&
-                        params.containsKey("type") &&
-                        params.containsKey("username") &&
-                        params.containsKey("timestamp") &&
-                        params.containsKey("secret")) {
-                    String type = (String) params.get("type");
-                    String username = (String) params.get("username");
-                    String nickname = (String) params.get("nickname");
-                    String timestamp = (String) params.get("timestamp");
-                    String secret = (String) params.get("secret");
+                } else if (path.equals(Main.me.comment_page)) {
+                    if (params.containsKey("nickname") &&
+                            params.containsKey("type") &&
+                            params.containsKey("username") &&
+                            params.containsKey("timestamp") &&
+                            params.containsKey("secret")) {
+                        String type = (String) params.get("type");
+                        String username = (String) params.get("username");
+                        String nickname = (String) params.get("nickname");
+                        String timestamp = (String) params.get("timestamp");
+                        String secret = (String) params.get("secret");
 
-                    if (sha256(username + nickname + timestamp + Main.me.secret_token).equals(secret)) {
-                        if (type.equals("insert")) {
-                            Main.me.add_comment_reward.execute(nickname);
+                        String secret_gen = sha256(username + nickname + timestamp + Main.me.secret_token);
 
-                            response = "ok";
-                            status_code = 200;
+                        if (secret_gen.equals(secret)) {
+                            if (type.equals("insert")) {
+                                Main.me.add_comment_reward.execute(nickname);
 
-                            if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"add_comment\" gave to player "+nickname);
-                        } else if (type.equals("delete")) {
-                            Main.me.del_comment_reward.execute(nickname);
+                                response = "ok";
+                                status_code = 200;
 
-                            response = "ok";
-                            status_code = 200;
+                                if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"add_comment\" gave to player "+nickname);
+                            } else if (type.equals("delete")) {
+                                Main.me.del_comment_reward.execute(nickname);
 
-                            if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"del_comment\" gave to player "+nickname);
+                                response = "ok";
+                                status_code = 200;
+
+                                if (Main.me.enable_logs) Main.me.getLogger().info("Reward \"del_comment\" gave to player "+nickname);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        try {
             e.sendResponseHeaders(status_code, response.length());
 
             OutputStream os = e.getResponseBody();
             os.write(response.getBytes());
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
