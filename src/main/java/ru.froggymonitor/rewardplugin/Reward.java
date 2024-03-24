@@ -54,7 +54,7 @@ public class Reward {
             player.getInventory().addItem(item);
         }
         if (data.containsKey("message")) {
-            player.spigot().sendMessage(Main.me.message_formatting.format(PlaceholderAPI.setPlaceholders(player, (String) data.get("message"))));
+            player.spigot().sendMessage(Main.me.formatMessage(player, (String) data.get("message")));
         }
         if (data.containsKey("as_player")) {
             for (String c : new ArrayList<>((List<String>) data.get("as_player"))) {
