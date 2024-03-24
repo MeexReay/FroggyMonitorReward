@@ -49,6 +49,12 @@ message_formatting: "ampersand" # Изменить тип форматирова
 # json:         {"text": "Сообщение", "color": "red"}
 ```
 
+## Права
+
+```
+froggy_monitor_reward.command.reload - Право на команду /reload
+```
+
 ## Как это работает
 
 ```mermaid

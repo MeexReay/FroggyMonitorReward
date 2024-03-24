@@ -6,3 +6,11 @@ authors: [ FroggyMonitor ]
 description: FroggyMonitor plugin that rewards votes and comments
 website: https://froggymonitor.ru
 softdepend: [ PlaceholderAPI, Vault ]
+
+commands:
+  reload:
+    description: Перезагрузка плагина
+    permission: froggy_monitor_reward.command.reload
+permissions:
+  froggy_monitor_reward.command.reload:
+    default: op
