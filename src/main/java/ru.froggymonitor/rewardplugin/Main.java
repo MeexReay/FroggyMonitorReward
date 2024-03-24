@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -62,12 +63,19 @@ public final class Main extends JavaPlugin implements Listener {
     public boolean has_placeholderapi;
     public boolean has_vault;
 
+    public String bind_host;
+    public int bind_port;
+
+    public ReloadCommand reload_command;
+
     @Override
     public void onEnable() {
         has_vault = setupEconomy();
         has_placeholderapi = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         me = this;
+
+        reload_command = new ReloadCommand();
 
         conf = new UnrealConfig(this, "config.yml");
 
@@ -84,6 +92,9 @@ public final class Main extends JavaPlugin implements Listener {
         add_comment_reward = new Reward("add_comment", (Map<String, Object>) conf.get("add_comment"));
         del_comment_reward = new Reward("del_comment", (Map<String, Object>) conf.get("del_comment"));
 
+        bind_host = (String) conf.get("bind_host");
+        bind_port = ((Number) conf.get("bind_port")).intValue();
+
         httpClient = HttpClient.newHttpClient();
 
         sendRewardUrls();
@@ -92,11 +103,7 @@ public final class Main extends JavaPlugin implements Listener {
 
         loadCache();
 
-        site = new SitePart(
-                (String) conf.get("bind_host"),
-                ((Number) conf.get("bind_port")).intValue(),
-                0);
-
+        site = new SitePart(bind_host,bind_port,0);
         site.start();
 
         getServer().getPluginManager().registerEvents(this,this);
@@ -104,8 +111,20 @@ public final class Main extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        saveCache();
-        site.stop();
+        tryCatchIgnore(() -> {
+            saveCache();
+            site.stop();
+        });
+    }
+
+    public interface tryCatchRunnable {
+        public void run() throws Throwable;
+    }
+
+    public void tryCatchIgnore(tryCatchRunnable r) {
+        try {
+            r.run();
+        } catch (Throwable ignored) {}
     }
 
     @EventHandler
@@ -172,7 +191,7 @@ public final class Main extends JavaPlugin implements Listener {
     public HttpClient httpClient;
 
     public void sendRewardUrls() {
-        String start_url = "http://"+external_host+":"+site.port;
+        String start_url = "http://"+external_host+":"+bind_port;
 
         String body = "{\"secret_token\": \""+secret_token+"\", "+
                         "\"vote_url\": \""+start_url+vote_page+"\", "+
