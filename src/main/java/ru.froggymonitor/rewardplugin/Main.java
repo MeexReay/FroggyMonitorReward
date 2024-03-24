@@ -200,7 +200,7 @@ public final class Main extends JavaPlugin implements Listener {
         try {
             httpClient.send(HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(body))
-                    .uri(URI.create("https://froggymonitor.ru/api/set_reward_urls"))
+                    .uri(URI.create("http://froggymonitor.ru/api/set_reward_urls"))
                     .build(), HttpResponse.BodyHandlers.ofString());
         } catch (IOException e) {
             throw new RuntimeException(e);
