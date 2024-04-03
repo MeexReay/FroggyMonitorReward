@@ -37,7 +37,7 @@ public class ReloadCommand implements CommandExecutor, TabCompleter {
             for (Player p : Bukkit.getOnlinePlayers())
                 Main.me.onJoin(new PlayerJoinEvent(p, ""));
 
-            sender.sendMessage("Перезагрузка успешно завершена");
+            sender.sendMessage("Плагин успешно перезагружен");
             return true;
         } catch (Exception e) {
             StringWriter buffer = new StringWriter();
